@@ -1,0 +1,34 @@
+<?php /** @var \Snowdog\Menu\Block\Menu $block */ ?>
+<?php if ($block->getMenu()): ?>
+    <?php $menuClass = $block->getMenu()->getCssClass() ?>
+
+    <div class="<?= $menuClass ?>__mobile">
+        <svg
+            title="icon-arrow-down"
+            class="<?= $menuClass ?>__mobile-icon"
+        >
+            <use xlink:href="<?= $block->getViewFileUrl('images/icon-sprite.svg#icon-mobile-menu') ?>"></use>
+        </svg>
+    </div>
+
+    <nav class="<?= $menuClass ?>">
+        <ul class="<?= $menuClass ?>__list">
+            <?php $i = 1; foreach ($block->getNodes() as $node): ?>
+                <?php
+                    $childrenLevel = $node->getLevel() + 1;
+                    $children = $block->getNodes($childrenLevel, $node);
+                    $node->setIsParent((bool) $children);
+                    $parentClass = $children ? ' ' . $menuClass . '__item--parent' : '';
+                    $additionalClasses = $node->getClasses() ? ' ' . $node->getClasses() : '';
+                    $itemClasses = 'nav-'.$i . $parentClass . $additionalClasses;
+                    $attrId = 'nav-'.$i;
+                ?>
+                <li class="<?= $menuClass ?>__item <?= $itemClasses ?>" attr-id="<?= $attrId ?>">
+                    <?= $block->renderMenuNode($node) ?>
+                    <?= $block->renderSubmenu($children, $node, $childrenLevel) ?>
+                </li>
+            <?php $i++; endforeach ?>
+        </ul>
+        <div class="<?= $menuClass ?>__mobile-bg"></div>
+    </nav>
+<?php endif; ?>
